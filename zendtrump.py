@@ -6,7 +6,6 @@ import os
 import random
 import re
 import shutil
-import ssl
 import string
 import tempfile
 import datetime
@@ -48,6 +47,30 @@ def get_image_url_for_searchterm(flickr_api, search_term):
     image_url = result[params]
     return image_url
 
+def split_tweet(tweet_text):
+    '''splits a tweet into two sections'''
+    print "tweet text: " + tweet_text
+
+    words = tweet_text.split(' ')
+
+    last_word = words[-1]
+    if last_word in ["#MAGA", 'Sad!', 'sad!']:
+        #special cases
+        top = words[:-1]
+        bottom = [words[-1]]
+    else:
+        #split into two
+        half = int(len(words)/2)
+        top = words[0:half]
+        bottom = words[half:]
+
+    clean_top = ' '.join(top)
+    print "top words: " + clean_top
+
+    clean_bottom = ' '.join(bottom) #no sniggering in the back!
+    print "bottom words: " + clean_bottom
+    return (clean_top, clean_bottom) #I won't tell you again!!
+
 def clean_tweet_text(last_status_text):
     '''removes unicode strings and URLs, and replaces some uri-like
     characters for memegen'''
@@ -63,15 +86,26 @@ def clean_tweet_text(last_status_text):
     }
 
     pattern = re.compile('|'.join(replacements.keys()))
+
     no_ascii = ''.join([i if ord(i) < 128 else '' for i in last_status_text])
     no_ascii_no_urls = re.sub(r'http\S+',
                               '',
                               no_ascii,
                               flags=re.MULTILINE)
     no_ascii_no_urls_no_newlines = string.join(no_ascii_no_urls.splitlines())
-    image_link = pattern.sub(lambda x: replacements[x.group()],
-                             no_ascii_no_urls_no_newlines) + ".jpg"
+    coalesced_spaces = ' '.join(no_ascii_no_urls_no_newlines.split())
+    (top_raw, bottom_raw) = split_tweet(coalesced_spaces)
+    print "TR " + top_raw
+    top = pattern.sub(lambda x: replacements[x.group()],
+                      top_raw)
+    bottom = pattern.sub(lambda x: replacements[x.group()],
+                         bottom_raw)
+
+    image_link = top + "/" + bottom + ".jpg"
     return image_link
+
+def construct_tweet_body():
+    return '#zenDonald @RealDonaldTrump'
 
 def zendtrump():
     '''Usage: zendtrump
@@ -121,7 +155,7 @@ def zendtrump():
     meme_image_link = "https://memegen.link/custom/" + clean_status_text + "?alt=" + image_url
     print "meme image link: " + meme_image_link
 
-    temp_filename = next(tempfile._get_candidate_names())
+    temp_filename = next(tempfile._get_candidate_names()) + ".tempimage"
     temp_fullpath = os.path.join(os.getcwd(), temp_filename)
 
     request = requests.get(meme_image_link, stream=True)
@@ -134,7 +168,8 @@ def zendtrump():
 
     temp_file = open(temp_fullpath, 'rb')
     twitter_media_id = twitter_api.UploadMediaSimple(temp_file)
-    twitter_api.PostUpdate(status='#zenDonald', media=twitter_media_id)
+    tweet_body = construct_tweet_body()
+    twitter_api.PostUpdate(status=tweet_body, media=twitter_media_id)
     print "tweet posted"
 
     print "done"
