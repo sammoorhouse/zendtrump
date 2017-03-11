@@ -57,24 +57,21 @@ def split_tweet(tweet_text):
     sentences = tweet_text.split('.')
 
     if len(sentences) is 2 and abs(sentences[0] - sentences[1] < 4):
-        top = sentences[0].split(' ')
-        bottom = sentences[1].split(' ')
-
+        top = sentences[0]
+        bottom = sentences[1]
+    elif len(sentences[-1]) < 5:
+        top = sentences[:-1]
+        bottom = sentences[-1]
     elif last_word in ["#MAGA", 'Sad!', 'sad!']:
-        top = words[:-1]
-        bottom = [words[-1]]
+        top = ' '.join(words[:-1])
+        bottom = words[-1] #this is somehow a string
     else:
         #split into two
         half = int(len(words)/2)
-        top = words[0:half]
-        bottom = words[half:]
+        top = ' '.join(words[0:half])
+        bottom = ' '.join(words[half:])
 
-    clean_top = ' '.join(top)
-    print "top words: " + clean_top
-
-    clean_bottom = ' '.join(bottom) #no sniggering in the back!
-    print "bottom words: " + clean_bottom
-    return (clean_top, clean_bottom) #I won't tell you again!!
+    return (top, bottom)
 
 def clean_tweet_text(last_status_text):
     '''removes unicode strings and URLs, and replaces some uri-like
