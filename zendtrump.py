@@ -95,7 +95,7 @@ def zendtrump():
 
     temp_file = open(temp_fullpath, 'rb')
     twitter_media_id = twitter_api.UploadMediaSimple(temp_file)
-    twitter_api.PostUpdate(status="", media=twitter_media_id)
+    twitter_api.PostUpdate(status=target, media=twitter_media_id)
 
     print "done"
 
