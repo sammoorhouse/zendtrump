@@ -5,16 +5,17 @@
 import os
 import random
 import re
-import ssl
-import tempfile
-import requests
 import shutil
+import ssl
 import string
+import tempfile
 
+import requests
 import twitter
-from flickrapi import FlickrAPI
 from apscheduler.schedulers.blocking import BlockingScheduler
+from flickrapi import FlickrAPI
 
+INTERVAL_MINS = 30
 
 def zendtrump():
     '''Usage: zendtrump
@@ -31,6 +32,7 @@ def zendtrump():
 
     user = twitter_api.GetUser(screen_name=target)
     last_status = user.status
+    
     last_status_text = last_status.text
 
     #get search term
@@ -103,8 +105,11 @@ def zendtrump():
     twitter_api.PostUpdate(status="", media=twitter_media_id)
 
 def main():
+
+    zendtrump()
+    
     sched = BlockingScheduler()
-    sched.add_job(zendtrump, 'interval', hours=6)
+    sched.add_job(zendtrump, 'interval', minutes=INTERVAL_MINS)
 
     try:
         sched.start()
