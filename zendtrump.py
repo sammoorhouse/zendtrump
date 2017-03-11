@@ -9,6 +9,7 @@ import shutil
 import ssl
 import string
 import tempfile
+import datetime
 
 import requests
 import twitter
@@ -32,7 +33,15 @@ def zendtrump():
 
     user = twitter_api.GetUser(screen_name=target)
     last_status = user.status
-    
+
+    post_time_ascii = last_status.created_at
+    post_time = datetime.datetime.strptime(post_time_ascii, '%a %b %d %H:%M:%S +0000 %Y')
+    now = datetime.datetime.now()
+
+    timediff = now - post_time
+    if timediff > (INTERVAL_MINS * 60):
+        return
+
     last_status_text = last_status.text
 
     #get search term
