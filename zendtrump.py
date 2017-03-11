@@ -84,14 +84,13 @@ def zendtrump():
     temp_fullpath = os.path.join(os.getcwd(), temp_filename)
 
     r = requests.get(meme_image_link, stream=True)
-    
+
     if r.status_code == 200:
         with open(temp_fullpath, 'wb') as f:
             r.raw.decode_content = True
             shutil.copyfileobj(r.raw, f)
 
     temp_file = open(temp_fullpath, 'rb')
-    meme_image_data = temp_file.read()
     twitter_media_id = twitter_api.UploadMediaSimple(temp_file)
     twitter_api.PostUpdate(status="", media=twitter_media_id)
 
