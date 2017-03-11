@@ -56,7 +56,10 @@ def zendtrump():
     fifty_results = flickr.photos.search(text=search_term, per_page=50, extras=params)
     images = fifty_results['photos']['photo']
     result = random.choice(images)
-    image_url = result['url_c']
+    while params not in result:
+        result = random.choice(images)
+
+    image_url = result[params]
 
     #do the needful
     replacements = {
