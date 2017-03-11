@@ -61,43 +61,25 @@ def zendtrump():
     }
 
     pattern = re.compile('|'.join(replacements.keys()))
-
-    print "1: " + last_status_text
-
     last_status_text_no_ascii = ''.join([i if ord(i) < 128 else '' for i in last_status_text])
-
-    print "2: " + last_status_text_no_ascii
 
     last_status_text_no_ascii_no_urls = re.sub(r'http\S+', '', last_status_text_no_ascii, flags=re.MULTILINE)
 
-    print "3: " + last_status_text_no_ascii_no_urls
-
     last_status_text_no_ascii_no_urls_no_newlines = string.join(last_status_text_no_ascii_no_urls.splitlines())
-
-    print "4: " + last_status_text_no_ascii_no_urls_no_newlines
 
     image_link = pattern.sub(lambda x: replacements[x.group()], last_status_text_no_ascii_no_urls_no_newlines) + ".jpg"
 
-    print "5: " + image_link
-
     meme_image_link = "https://memegen.link/custom/" + image_link + "?alt=" + image_url
-
-    print "AFTER: " + meme_image_link
 
     temp_filename = next(tempfile._get_candidate_names())
     temp_fullpath = os.path.join(os.getcwd(), temp_filename)
 
-    print temp_filename
-
     r = requests.get(meme_image_link, stream=True)
-    print "STATUS CODE = " + str(r.status_code)
     
     if r.status_code == 200:
         with open(temp_fullpath, 'wb') as f:
             r.raw.decode_content = True
             shutil.copyfileobj(r.raw, f)
-
-    print "file saved: " + temp_fullpath
 
     temp_file = open(temp_fullpath, 'rb')
     meme_image_data = temp_file.read()
@@ -107,7 +89,7 @@ def zendtrump():
 def main():
 
     zendtrump()
-    
+
     sched = BlockingScheduler()
     sched.add_job(zendtrump, 'interval', minutes=INTERVAL_MINS)
 
