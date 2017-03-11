@@ -52,10 +52,15 @@ def split_tweet(tweet_text):
     print "tweet text: " + tweet_text
 
     words = tweet_text.split(' ')
-
     last_word = words[-1]
-    if last_word in ["#MAGA", 'Sad!', 'sad!']:
-        #special cases
+
+    sentences = tweet_text.split('.')
+
+    if len(sentences) is 2 and abs(sentences[0] - sentences[1] < 4):
+        top = sentences[0].split(' ')
+        bottom = sentences[1].split(' ')
+
+    elif last_word in ["#MAGA", 'Sad!', 'sad!']:
         top = words[:-1]
         bottom = [words[-1]]
     else:
