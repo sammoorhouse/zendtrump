@@ -1,2 +1,4 @@
 requests
 flickrapi
+apscheduler
+python-twitter
