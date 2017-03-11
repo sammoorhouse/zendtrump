@@ -15,7 +15,7 @@ import twitter
 from apscheduler.schedulers.blocking import BlockingScheduler
 from flickrapi import FlickrAPI
 
-INTERVAL_MINS = 30
+INTERVAL_MINS = os.environ['interval_mins']
 
 def zendtrump():
     '''Usage: zendtrump
@@ -85,6 +85,8 @@ def zendtrump():
     meme_image_data = temp_file.read()
     twitter_media_id = twitter_api.UploadMediaSimple(temp_file)
     twitter_api.PostUpdate(status="", media=twitter_media_id)
+
+    print "done"
 
 def main():
 
