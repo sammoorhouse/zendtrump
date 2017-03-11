@@ -143,7 +143,7 @@ def zendtrump():
     timediff = now - post_time
     print "latest tweet was " + str(timediff.seconds) + " seconds ago"
 
-    if timediff.seconds > (INTERVAL_MINS * 60) and not LAST_TWEET_OVERRIDE:
+    if timediff.seconds < (INTERVAL_MINS * 60) and not LAST_TWEET_OVERRIDE:
         print "skipping this run"
         return
 
