@@ -1,1 +1,1 @@
-worker: python zendtrump
+worker: python zendtrump.py
