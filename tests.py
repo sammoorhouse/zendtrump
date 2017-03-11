@@ -20,7 +20,8 @@ class TestStringMethods(unittest.TestCase):
     def test_long_simple_split(self):
         '''simple split should work for long sentences too'''
 
-        tweet = "LinkedIn Workforce Report: January and February were the strongest consecutive months for hiring since August and September 2015"
+        tweet = "LinkedIn Workforce Report: January and February were the strongest \
+        consecutive months for hiring since August and September 2015"
 
         (top, bottom) = zendtrump.split_tweet(tweet)
 
@@ -42,12 +43,27 @@ class TestStringMethods(unittest.TestCase):
         '''if the last sentence is short, it should always be the
         second in the split'''
 
-        tweet = "Met with @RepCummings today at the @WhiteHouse. Great discussion!"
+        tweet = "Met with @RepCummings today at the @WhiteHouse. Great discussion"
 
         (top, bottom) = zendtrump.split_tweet(tweet)
 
         self.assertEquals(top, "Met with @RepCummings today at the @WhiteHouse")
-        self.assertEquals(bottom, "Great discussion!")
+        self.assertEquals(bottom, "Great discussion")
+
+    def test_powerful_ending(self):
+        '''if the last sentence ends in an exclamation mark,
+        it's the second in the split'''
+
+        tweet = "122 vicious prisoners, released by the Obama \
+Administration from Gitmo, have returned to the battlefield. \
+Just another terrible decision!"
+
+        (top, bottom) = zendtrump.split_tweet(tweet)
+
+        self.assertEquals(top, "122 vicious prisoners, released by the Obama \
+Administration from Gitmo, have returned to the battlefield")
+        self.assertEquals(bottom, "Just another terrible decision!")
 
 if __name__ == '__main__':
     unittest.main()
+

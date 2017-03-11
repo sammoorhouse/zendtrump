@@ -60,11 +60,15 @@ def split_tweet(tweet_text):
         # two similar-length sentences?
         top = sentences[0]
         bottom = sentences[1]
+    elif sentences[-1].endswith('!'):
+        # big ending. Excellent!
+        top = ' '.join(sentences[:-1])
+        bottom = sentences[-1]
     elif len(sentences[-1].split(' ')) < 5:
         #less than 5 words in the final sentence?
         top = ' '.join(sentences[:-1])
         bottom = sentences[-1]
-    elif last_word in ["#MAGA", 'Sad!', 'sad!']:
+    elif last_word in ["#MAGA", 'Sad!', 'sad!', 'Weak!']:
         # famous last words?
         top = ' '.join(words[:-1])
         bottom = words[-1] #this is somehow a string
