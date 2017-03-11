@@ -39,7 +39,7 @@ def zendtrump():
     now = datetime.datetime.now()
 
     timediff = now - post_time
-    if timediff > (INTERVAL_MINS * 60):
+    if timediff.seconds > (INTERVAL_MINS * 60):
         return
 
     last_status_text = last_status.text
