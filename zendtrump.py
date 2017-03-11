@@ -17,6 +17,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from flickrapi import FlickrAPI
 
 INTERVAL_MINS = int(os.environ['interval_mins'])
+LAST_TWEET_OVERRIDE = bool(os.environ['last_tweet_override'])
 
 def get_search_term(filename):
     '''returns a random line from the given file'''
@@ -99,9 +100,9 @@ def zendtrump():
     timediff = now - post_time
     print "latest tweet was " + str(timediff.seconds) + " seconds ago"
 
-    if timediff.seconds > (INTERVAL_MINS * 60):
+    if timediff.seconds > (INTERVAL_MINS * 60) and not LAST_TWEET_OVERRIDE:
         print "skipping this run"
-        #return
+        return
 
     last_status_text = last_status.text
 
