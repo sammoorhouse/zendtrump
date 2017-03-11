@@ -13,9 +13,10 @@ import string
 
 import twitter
 from flickrapi import FlickrAPI
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 
-def main():
+def zendtrump():
     '''Usage: zendtrump
         This script reads a users' last tweet, and plants it on top of a relaxing image.
 
@@ -100,6 +101,15 @@ def main():
     meme_image_data = temp_file.read()
     twitter_media_id = twitter_api.UploadMediaSimple(temp_file)
     twitter_api.PostUpdate(status="", media=twitter_media_id)
+
+def main():
+    sched = BlockingScheduler()
+    sched.add_job(zendtrump, 'interval', hours=6)
+
+    try:
+        sched.start()
+    except (KeyboardInterrupt, SystemExit):
+        pass
 
 if __name__ == "__main__":
     main()
