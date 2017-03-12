@@ -14,14 +14,14 @@ class TestStringMethods(unittest.TestCase):
 
         (top, bottom) = zendtrump.split_tweet(tweet)
 
-        self.assertEquals(top, "")
-        self.assertEquals(bottom, "hello world")
+        self.assertEquals(top, "hello")
+        self.assertEquals(bottom, "world")
 
     def test_long_simple_split(self):
         '''simple split should work for long sentences too'''
 
         tweet = "LinkedIn Workforce Report: January and February were the strongest \
-        consecutive months for hiring since August and September 2015"
+consecutive months for hiring since August and September 2015"
 
         (top, bottom) = zendtrump.split_tweet(tweet)
 
@@ -47,7 +47,7 @@ class TestStringMethods(unittest.TestCase):
 
         (top, bottom) = zendtrump.split_tweet(tweet)
 
-        self.assertEquals(top, "Met with @RepCummings today at the @WhiteHouse")
+        self.assertEquals(top, "Met with @RepCummings today at the @WhiteHouse.")
         self.assertEquals(bottom, "Great discussion")
 
     def test_powerful_ending(self):
@@ -61,8 +61,22 @@ Just another terrible decision!"
         (top, bottom) = zendtrump.split_tweet(tweet)
 
         self.assertEquals(top, "122 vicious prisoners, released by the Obama \
-Administration from Gitmo, have returned to the battlefield")
+Administration from Gitmo, have returned to the battlefield.")
         self.assertEquals(bottom, "Just another terrible decision!")
+
+    def test_long_multi_sentence(self):
+        ''''''
+
+        tweet = "We are making great progress with healthcare. \
+ObamaCare is imploding and will only get worse. \
+Republicans coming together to get job done!"
+
+        (top, bottom) = zendtrump.split_tweet(tweet)
+
+        self.assertEquals(top, "We are making great progress with healthcare. \
+ObamaCare is imploding and will only get worse.")
+        self.assertEquals(bottom, "Republicans coming together to get job done!")
+
 
 if __name__ == '__main__':
     unittest.main()
