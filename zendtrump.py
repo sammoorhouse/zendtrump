@@ -132,18 +132,32 @@ def zendtrump():
                            os.environ['flickr_secret'],
                            format='parsed-json')
 
-    # get latest status
+    # have I been restarted?
+    # If I've tweeted in the last interval; it's likely due to
+    # a restart caused by a git change. Skip this run.
+    my_id = "@ZenDTrump"
+    my_last_status = get_last_tweet_for_user(twitter_api, my_id)
+    my_last_post_time_ascii = my_last_status.created_at
+    my_last_post_time = datetime.datetime.strptime(my_last_post_time_ascii,
+                                                   '%a %b %d %H:%M:%S +0000 %Y')
+    now = datetime.datetime.now()
+    my_timediff = now - my_last_post_time
+    print "my last post time was " + str(my_timediff.total_seconds()) + " seconds ago"
+
+    if my_timediff.total_seconds() < (INTERVAL_MINS * 60):
+        print "I've been restarted"
+        return
+
+    # Has Don tweeted recently? Probably. If not, go to sleep.
     target = "@RealDonaldTrump"
 
     last_status = get_last_tweet_for_user(twitter_api, target)
     post_time_ascii = last_status.created_at
     post_time = datetime.datetime.strptime(post_time_ascii, '%a %b %d %H:%M:%S +0000 %Y')
-    now = datetime.datetime.now()
 
     timediff = now - post_time
-    print "latest tweet was " + str(timediff.total_seconds()) + " seconds ago"
-    print "interval mins in seconds: " + str(INTERVAL_MINS * 60)
-    print "override? " + str(LAST_TWEET_OVERRIDE)
+    print target + "'s latest tweet was " + str(timediff.total_seconds()) + " seconds ago"
+    
 
     if timediff.total_seconds() > (INTERVAL_MINS * 60) and not LAST_TWEET_OVERRIDE:
         print "skipping this run"
