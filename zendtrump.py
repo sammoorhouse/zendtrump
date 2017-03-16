@@ -49,7 +49,6 @@ def get_image_url_for_searchterm(flickr_api, search_term):
 
 def split_tweet(tweet_text):
     '''splits a tweet into two sections'''
-    print "tweet text: " + tweet_text
 
     words = tweet_text.split(' ')
     last_word = words[-1]
@@ -104,7 +103,6 @@ def clean_tweet_text(last_status_text):
     no_ascii_no_urls_no_newlines = string.join(no_ascii_no_urls.splitlines())
     coalesced_spaces = ' '.join(no_ascii_no_urls_no_newlines.split())
     (top_raw, bottom_raw) = split_tweet(coalesced_spaces)
-    print "TR " + top_raw
     top = pattern.sub(lambda x: replacements[x.group()],
                       top_raw)
     bottom = pattern.sub(lambda x: replacements[x.group()],
@@ -114,6 +112,7 @@ def clean_tweet_text(last_status_text):
     return image_link
 
 def construct_tweet_body():
+    '''constructs the body text of the outgoing tweet'''
     return '#zenDonald @RealDonaldTrump'
 
 def zendtrump():
@@ -176,6 +175,7 @@ def zendtrump():
     print "found image: " + image_url
 
     #clean up the text
+    print "original tweet text: " + last_status_text
     clean_status_text = clean_tweet_text(last_status_text)
     print "cleaned up status text: \"" + clean_status_text + "\""
 
