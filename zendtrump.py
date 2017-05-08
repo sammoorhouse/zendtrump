@@ -59,7 +59,7 @@ def split_tweet(tweet_text):
         # two similar-length sentences?
         top = sentences[0]
         bottom = sentences[1]
-    elif sentences[-1].endswith('!'):
+    elif len(sentences) > 1 and sentences[-1].endswith('!'):
         # big ending. Excellent!
         top = '.'.join(sentences[:-1]) + "."
         bottom = sentences[-1]
@@ -79,37 +79,38 @@ def split_tweet(tweet_text):
 
     return (top.strip(), bottom.strip())
 
-def clean_tweet_text(last_status_text):
-    '''removes unicode strings and URLs, and replaces some uri-like
-    characters for memegen'''
+def memegen_replace(tweet):
+    '''replaces some uri-like characters for memegen'''
+    tweet = re.sub(r"\s+", "-", tweet)
+    tweet = re.sub("_", "__", tweet)
+    tweet = re.sub(r"\?", "~q", tweet)
+    tweet = re.sub("%", "~p", tweet)
+    tweet = re.sub("#", "~h", tweet)
+    tweet = re.sub("/", "~s", tweet)
+    tweet = re.sub("\\\"", "\'\'", tweet)
 
-    replacements = {
-        ' ':'_',
-        '_':'__',
-        '\?':'~q',
-        '%':'~p',
-        '#':'~h',
-        '/':'~s',
-        '\\\"':'\'\''
-    }
+    return tweet
 
-    pattern = re.compile('|'.join(replacements.keys()))
+def clean_tweet_text(tweet):
+    '''removes unicode strings and URLs'''
 
-    no_ascii = ''.join([i if ord(i) < 128 else '' for i in last_status_text])
-    no_ascii_no_urls = re.sub(r'http\S+',
-                              '',
-                              no_ascii,
-                              flags=re.MULTILINE)
-    no_ascii_no_urls_no_newlines = string.join(no_ascii_no_urls.splitlines())
-    coalesced_spaces = ' '.join(no_ascii_no_urls_no_newlines.split())
-    (top_raw, bottom_raw) = split_tweet(coalesced_spaces)
-    top = pattern.sub(lambda x: replacements[x.group()],
-                      top_raw)
-    bottom = pattern.sub(lambda x: replacements[x.group()],
-                         bottom_raw)
+    # mostly robbed from https://github.com/lukewrites/sealdonaldtrump/blob/master/tweet_getter.py
+    tweet = ''.join([i if ord(i) < 128 else '' for i in tweet]) #high ascii
+    tweet = re.sub(r"https?\:\/\/", "", tweet)   #links
+    tweet = re.sub(r"t.co\/([a-zA-Z0-9]+)", "", tweet)
+    tweet = re.sub(r"bit.ly\/([a-zA-Z1-9]+)", "", tweet)
+    tweet = re.sub(r"Video\:", "", tweet)        #Videos
+    tweet = re.sub(r"\n", "-", tweet)             #new lines
+    tweet = re.sub(r"&amp;", "and", tweet)       #encoded ampersands
+
+    # split tweet here
+    (top, bottom) = split_tweet(tweet)
+    top = memegen_replace(top)
+    bottom = memegen_replace(bottom)
 
     image_link = top + "/" + bottom + ".jpg"
     return image_link
+
 
 def construct_tweet_body():
     '''constructs the body text of the outgoing tweet'''
